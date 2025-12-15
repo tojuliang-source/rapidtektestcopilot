@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rapidtek「一瞬・職場」拍立得投票（Final）</title>
+<style>
+:root{ --bg:#0b0e12; --text:#f3f4f6; --muted:#9ca3af; --accent:#34d399; --card:#111827; --border:#1f2937; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans",sans-serif}
+header{padding:24px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:linear-gradient(180deg, rgba(11,14,18,.95), rgba(11,14,18,.85));backdrop-filter:saturate(160%) blur(6px);z-index:50}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:14px}
+.container{max-width:1100px;margin:0 auto;padding:16px}
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0 16px}
+.badge{padding:6px 10px;border:1px dashed var(--border);border-radius:10px;color:var(--muted);font-size:14px}
+.badge strong{color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.photo-wrap{position:relative;background:#0f172a;height:280px;display:flex;align-items:center;justify-content:center;padding:8px}
+.photo-wrap img{max-height:100%;max-width:100%;height:auto;width:auto;object-fit:contain;border-radius:8px}
+.card .meta{padding:12px 12px 8px}
+.name{font-weight:600}
+.emp{color:var(--muted);font-size:13px}
+.actions{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:8px 12px 12px}
+button.vote{border:1px solid var(--border);background:#0b0e12;color:var(--text);padding:6px 10px;border-radius:10px;cursor:pointer}
+button.vote.active{background:var(--accent);color:#0b0e12;border-color:transparent}
+button.submit{background:var(--accent);color:#0b0e12;border:0;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:600}
+.rules{margin-top:8px;color:var(--muted);font-size:14px}
+.rules ul{margin:6px 0 0 16px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:100}
+.modal.open{display:flex}
+.viewer{max-width:900px;width:92vw;max-height:90vh;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr}
+.viewer .big{background:#0f172a;display:flex;align-items:center;justify-content:center;padding:12px}
+.viewer .big img{max-width:100%;max-height:100%;object-fit:contain}
+.viewer .desc{padding:12px;overflow:auto}
+.viewer .desc h3{margin:0 0 6px}
+.viewer .desc .text{white-space:pre-wrap}
+.close{position:absolute;top:14px;right:14px;background:#0b0e12;color:#fff;border:1px solid var(--border);border-radius:999px;width:36px;height:36px;display:grid;place-items:center;cursor:pointer}
+@media (max-width:720px){.viewer{grid-template-columns:1fr}.viewer .big{min-height:40vh}}
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <h1>Rapidtek「一瞬・職場」拍立得投票（Final）</h1>
+    <div class="sub">點擊照片後可預覽更大的照片 + 文字描述。投票完後可送出（此頁僅示範前端行為）。</div>
+    <div class="controls">
+      <div class="badge">剩餘票數：<span id="remain"><strong>5</strong> / 5</span></div>
+      <button class="submit" onclick="submitVotes()">確認送出投票</button>
+    </div>
+    <div class="rules">
+      <strong>投票規則：</strong>
+      <ul>
+        <li>每位員工可投 <strong>5</strong> 票。</li>
+        <li>可以投給自己的作品。</li>
+        <li>投票後不可更改（範例頁未串接後端）。</li>
+        <li>票數對一般使用者 <strong>不公開顯示</strong>。</li>
+      </ul>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <div class="grid"></div>
+</div>
+
+<script id="dataset" type="application/json">[{"no": 1, "date": "2025-11-26 00:00:00", "name": "Kirin", "emp_id": "RP25016", "photo_name": "王奇霖 Kirin", "description": "鐳洋科技夾住你／妳的心，我已與釘書機惡魔簽訂契約，釘到的人要當福委，就這樣耶誕快樂。被要求要補滿100個字，所以我來推薦一下我喜歡的短篇漫畫，第一部就是藤本樹的《鏈鋸人》，第一句的介紹就是出自於裡面要與惡魔簽約來獲得能力，第二部是淺野一二O的《Solanin》，這漫畫鼓舞了在大學時期迷茫的我，適合還在尋找答案的市井小民，應該滿一百字了，撤退。"}, {"no": 2, "date": "2025-11-28 00:00:00", "name": "Lucy", "emp_id": "RP24003", "photo_name": "陳純雅 Lucy", "description": "一位太空人盯著遠方閃爍的星辰，旁邊幾顆衛星像調皮小燈泡繞圈圈轉。這不只是一場夢幻冒險，而是勇敢衝出舒適圈的時刻——Think Next, Act Now！讓每個瘋狂創新點子瞬間變身太空任務，帶著笑容和勇氣，踩著星光，衝上屬於公司的星際航道吧！"}, {"no": 3, "date": "2025-11-28 00:00:00", "name": "Fiona", "emp_id": "RP24026", "photo_name": "黃昭容 Fiona", "description": "專注在工作中不一定就要急急忙忙、大肆喧囂，心靜了，時間就慢下來了，我就在我自己的小宇宙。而這些心無旁鶩的時刻，就是忙裡偷「閑」的me time–一種閑靜與自在。\n成為匠人的時刻不是驚天動地，而是在他每一次俯下身檢視貨件時，那份細緻、專注的瞬間。"}, {"no": 4, "date": "2025-12-02 00:00:00", "name": "Kody", "emp_id": "RP20005", "photo_name": "陳觀豪 Kody", "description": "當光線在黑與白之間流轉\n工作與休息交替，現實與夢想交錯\n那一刻，按下快門捕捉的是心境的靜止\n可惜時間不會因此停下\n它只能帶著我們向前行\n眼前的照片，不僅是瞬間的定格\n更是真實人生的映射\n人生本無意義\n意義是自己賦予。"}, {"no": 5, "date": "2025-12-02 00:00:00", "name": "Ken", "emp_id": "RP24001", "photo_name": "劉長勳 Ken", "description": "在辦公室那不經意的一隅，小 Ken 和 Chris 靠得那麼近，彷彿連呼吸都在焊槍微光裡輕輕交織。透過鏡頭，他們每一次俯身、每一個確認，都像是在對專案輕聲說：「別怕，我們在。」這份捲起袖子的投入，不張揚，卻讓人心裡微微一亮，跟鏟子超人一樣，他們是：焊接超人。"}, {"no": 6, "date": "2025-12-04 00:00:00", "name": "Stacey", "emp_id": "RP21605", "photo_name": "宋旻潔 Stacey", "description": "辦公室的500萬夥伴\n每天與它朝夕相處，雙手觸碰、仔細檢驗，為品質層層把關。\n夏天，它熱情失控，狂吹熱風讓我們體驗辦公室三溫暖，\n冬天，同樣的熱氣卻成了最暖心的陪伴。\n這台身價不凡的設備，脾氣古怪卻不可或缺。\n我們用雙手感受它的溫度，它用獨特的方式見證我們的專業與堅持，成為每個工作日裡無可取代的夥伴。"}, {"no": 7, "date": "2025-12-04 00:00:00", "name": "Vincent", "emp_id": "RP23024", "photo_name": "李文基 Vincent.JPG", "description": "清晨，品檢區燈光初亮，\n一輛平凡的手推台車靜靜停在檢驗站旁，\n默默陪伴檢驗人員度過忙碌日子。\n它載著待檢物料，在倉庫與檢驗站間穿梭，雖不起眼，卻穩定可靠。\n檢驗人員在放大目鏡與電腦數據的陪伴下，\n專注檢查每一處微小瑕疵，\n守護的不只是產品，而是承載著鐳洋對客戶的承諾與信任。\n台車輪子在地面留下淡淡痕跡，\n如同檢驗人員對完美的追求與堅持。\n日復一日，他們以無聲的努力，撐起公司最可靠的基石。"}, {"no": 8, "date": "2025-12-05 00:00:00", "name": "Vivian", "emp_id": "RP10002", "photo_name": "張㛳媜 Vivian", "description": "Happy Birthday!\n在堆滿文件的辦公室裡，儘管環境繁忙，每個人的笑容卻讓畫面充滿溫暖。這份快樂和團結的氛圍提醒我們：無論多忙，都應該留下一些值得紀念的瞬間，並保持對生活的熱愛與積極的心態。生活的美好，往往就藏在這些微小卻充滿意義的時刻裡。"}, {"no": 9, "date": "2025-12-08 00:00:00", "name": "Rex", "emp_id": "RP24024", "photo_name": "褚文彬 Rex", "description": "回歸公司後，心情既熟悉又踏實。短暫的離開讓我重新調整步伐，也更珍惜與  團隊合作的價值。重新投入工作後，更明確自己的方向與目標。感謝同事們的支持，未來會以更穩定、積極的態度迎接每個挑戰.在鐳皮鐵克溫暖團隊下.努力加油.迎向2026年。"}, {"no": 10, "date": "2025-12-09 00:00:00", "name": "Dephane", "emp_id": "RP25020", "photo_name": "詹詠棻 Daphne", "description": "這陣子早上一走進來就會先在走廊張望一番。很喜歡看著門口的RAPIDTEK一點一滴被妝點上聖誕的氣息，讓我變得越來越期待上班了🥰希望架上的五個聖誕小人偶可以為Rapidtek帶來好運，今年就讓我向聖誕老公公許願明年Rapidtek一樣賺大錢，生意蒸蒸日上吧！祝大家聖誕快樂🎄"}, {"no": 11, "date": "2025-12-10 00:00:00", "name": "Celia", "emp_id": "RP24005", "photo_name": "林亭均 Celia", "description": "曾經的故鄉北海道，越來越遠，但台灣的人情味，漸漸豐富了我的生活。\n那天，難得一起去看夕陽，金色光線灑滿城市，我像小小守護神，靜靜坐在身邊。\n每天上班時光，偶爾有朋友過來摸摸我，雖然我不會說話，但我感受到滿滿的善意與溫暖，也會繼續陪妳迎接每一天的到來。"}, {"no": 12, "date": "2025-12-10 00:00:00", "name": "Ruby", "emp_id": "RP25014", "photo_name": "廖婕妤 Ruby", "description": "【Ruby位置上的卡皮巴拉】\n上班有卡皮巴拉的陪伴，真的會覺得特別療癒。\n每天通勤的路上，只要拿出手機看看牠呆萌的樣子，不管外面塞車到動不了、人潮擁擠得喘不過氣，心情都彷彿輕鬆了些。\n有卡皮巴拉在，再混亂的早晨也能慢慢變得可愛起來。\n看到牠就會覺得：It's OK~"}, {"no": 13, "date": "2025-12-10 00:00:00", "name": "Frank", "emp_id": "RP24021", "photo_name": "袁登周 Frank", "description": "作品創作靈感來源於融合最具代表公司的記憶點與將至的過節氛圍，來表述公司透過這樣的裝飾期待並迎接佳節之氣氛，透過個人發現的視角與光線捕捉瞬間影像，讓對佳節的期待紀錄在影像當中，期許公司同仁皆能佳節愉快。"}, {"no": 14, "date": "2025-12-10 00:00:00", "name": "Zoe", "emp_id": "RP18014", "photo_name": "詹人靜 Zoe", "description": "在這裡上班，是我成為大人的起點。\n從初入職場、遇見伴侶，到即將成為媽媽——\n我的人生每一段重要階段，都在這間公司被見證、被陪伴。\n\n我用結婚照與寶寶的超音波記錄這一刻，\n因為這些不是擺拍的華麗畫面，\n而是我在職場裡最真實、最珍貴的瞬間。\n\n這裡不只是工作的地方，\n更是我人生故事一路延伸的地方。"}, {"no": 15, "date": "2025-12-11 00:00:00", "name": "Kate", "emp_id": "RP21018", "photo_name": "許劭薇 Kate", "description": "八爺其實平時都是妻管嚴，連千鈔放哪都要提前報備。好不容易趁著夫人閉目養神的空檔偷溜出門灌籃，結果還不敢太大聲，怕網聲太響傳回家被抓包。畢竟，與其得分不如得安穩。兄弟們看我飛翔就好，千萬不要拍影片 tag 夫人，不然我今晚真的會被吊起來打了。"}, {"no": 16, "date": "2025-12-11 00:00:00", "name": "Yarissa", "emp_id": "RP24028", "photo_name": "郭儀君 Yarissa", "description": "我們活在浩瀚的宇宙裡，面對漫天飄灑的宇宙塵埃和星河光塵，我們是比這些還要渺小的存在。透過花生和太空人夥伴一起漂浮在太空之中探險宇宙有趣的意象，傳遞出：「儘管我們是如此微小的存在，但是認真生活的人，都像星辰一樣微微地發著光、都是帶著祝福的。」花生的美好寓意即是：好事發生，雖然每天不一定都會過得很順利、很開心，但我們每個人仍然有愛可期，用心去體驗和感受生活帶來的有趣，好事總會來臨的！"}, {"no": 17, "date": "2025-12-11 00:00:00", "name": "Ling", "emp_id": "RP20001", "photo_name": "王齡萱 Ling", "description": "每當走進這扇門，看到大大的 Rapidtek 字樣和 6980，總會提醒我們：大家正一起朝同樣的目標努力前進，年底節慶的燈光與聖誕樹，讓這個入口多了一份溫度，也像是替這一年畫上一個記錄的標記。回頭看，團隊們一起走過了許多挑戰與里程碑；往前看，這扇門也將陪著我們迎接下一段新的開始。"}, {"no": 18, "date": "2025-12-11 00:00:00", "name": "Alex Chiang", "emp_id": "RP23033", "photo_name": "蔣智中 Alex", "description": "這張照片呈現青埔工程師 Frank 的幽默與效率哲學。他手握安全帽，眼神中透露出「準備衝刺」的決心，彷彿在宣告：時間就是金錢，下班就是勝利。只要有人拖延，他就會舉起安全帽，提醒大家加快腳步，別讓進度成為下班的絆腳石。這不僅是一個動作，更是一種團隊默契與工作節奏的象徵，讓忙碌的日常增添一絲趣味。\n標語：「安全帽一舉，效率加倍；下班路上，誰也別拖！」"}, {"no": 19, "date": "2025-12-11 00:00:00", "name": "Dora", "emp_id": "RP22030", "photo_name": "林翰慧 Dora", "description": "一年又一年，指尖翻過的紙張染上時間的溫度。\n歲月靜靜堆疊在一冊冊傳票中，小小的會計部默默將每一筆交易、每一段故事細細記錄。\n每一筆交易都是公司走過的路，每一頁紙都是歷史留下的光。\n時間從未停下，僅在紙張間留下刻痕；而我們在傳票堆疊的縫隙中，看見公司成長的年代，也看見自己參與其中的證明。\n會計部用最安靜的方式，為鐳洋守住每一段歷史。"}, {"no": 20, "date": "2025-12-11 00:00:00", "name": "Vicky", "emp_id": "RP21020", "photo_name": "葉莉涵 Vicky", "description": "忙碌散去，心裡還留著尚未放下的喧囂\n我在窗邊停下腳步\n思緒随着呼吸慢慢沉澱\n\n夕陽把雲染成柔和晚霞\n像是替今日的奔波蓋上一層薄薄的溫暖\n遠方的山靜默無語\n鋪上一層安靜的薄毯\n山線沉穩，城市開始點燈\n光在街道間流動\n像不急不徐的呼吸\n\n那一刻，我感覺心被暮色輕輕攬住\n所有未說出口的疲憊\n在天色漸深裡慢慢散開\n\n原來餘暉落下時，\n世界會悄悄留一束光給願意抬頭的人\n提醒我們——\n在日常裡，也能遇見溫柔的風景"}, {"no": 21, "date": "2025-12-11 00:00:00", "name": "Lilyah", "emp_id": "RP25011", "photo_name": "蘇玲郁 Lilyah", "description": "我坐在辦公桌前，迎接新的一天，\n愛上每一次與數字的細微對話，\n鐳射般的專注，穿透繁雜帳務，\n洋溢在心頭的，是對工作的執著與熱情。\n財報中每個差異，都牽動我的思緒，\n務實而細膩，我一筆一筆檢查，\n部門的穩定，仰賴這份默默守護。\n我明白細節的重要，\n愛著每次解開帳務謎題的瞬間，\n鐳射出努力的光芒，照亮公司的方向，\n洋溢著踏實與滿足，我靜靜感受，\n財務的責任讓我心跳加速，\n部分成功，都是專業與堅持交織的結果。"}, {"no": 22, "date": "2025-12-11 00:00:00", "name": "Ansley", "emp_id": "RP25006", "photo_name": "蔡靖晨 Ansley", "description": "我每天站在整齊的傳票櫃前，與冰冷的數字為伍。\n愛著這份看似枯燥的工作，因為它承載着責任與秩序。\n鐳洋會計部的櫃子裡，藏著我們無數的汗水與堅持。\n洋溢的不是冰冷，而是團隊默默的付出與熱愛。\n會在某一刻看見同事豎起的大拇指，打破沉默。\n計算著每一張單據的精準之餘，也感受到被認可。\n部門裡的每個人，都在這個讚許中找到溫暖與力量。"}, {"no": 23, "date": "2025-12-11 00:00:00", "name": "Levi", "emp_id": "RP25018", "photo_name": "陳聖樺 Levi", "description": "午休本該是味蕾的聖殿，但主管的手機卻搶戲成了主角。他桌前一碗鍋燒麵、一手接電話，表情嚴肅得彷彿在跟Arthur開會。旁人以為他在談大事，其實只是中華電信的倒貼。午餐冷了，戲份熱著。把玩相機的我不小心撥到了Print，因而在粗心之中誕生了曠世巨作。"}, {"no": 24, "date": "2025-12-11 00:00:00", "name": "Ben", "emp_id": "RP23005", "photo_name": "林致宏 Ben", "description": "[雙蔣聯手：午餐失竊案終極結案]\n \n左小蔣盯著空空的餐盒，語氣沉重得像在公布國家機密：『你覺得是誰幹的？』\n右小蔣立刻揉下巴，擺出自以為很專業的名偵探姿勢：『還用問？一定是林博。那傢伙看到別人的午餐就像看到人生使命一樣。』\n左小蔣深吸一口氣，點頭如搗蒜：『我也這麼覺得，他昨天還在問我咖哩飯怎麼加量不加價。』\n兩人四目交接，瞬間達成高度共識：『結案。』\n雖然沒有證據，但他們對自己的直覺比對營養午餐還要有信心。"}, {"no": 25, "date": "2025-12-21 00:00:00", "name": "Miko", "emp_id": "RP18028", "photo_name": "林家安 Miko", "description": "ㄤㄤㄤ～小叮噹幫我實現～所有的願望～十八般武藝樣樣精通的生產資源整合中心處長Henry，蝦咪問題都難不倒他。專門對付疑難雜症、問事問感情、通靈通馬桶、鬼斧神工般補漆，不限於供應鏈部門，無論任何問題，都將伸出圓手！"}, {"no": 26, "date": "2025-12-21 00:00:00", "name": "Ruru", "emp_id": "RP24017", "photo_name": "廖于汝 Ruru", "description": "在這個忙裡偷閒的下午三點, 神攝手Ruru捕捉到飢腸轆轆的同事們像蝗蟲過境般, 正在瓜分著充滿喜悅的喜餅, 能像這樣聚在一起吃漂亮新娘子帶來的美味喜餅, 簡直就是最棒的小確幸,祝福vvn的結婚生活像蜂蜜一樣甜,像麥芽一樣黏"}]</script>
+<script>
+const MAX_VOTES = 5;           // 上限 5 票
+const allowSelfVote = true;    // 開放自投
+// 支援常見與大小寫副檔名，並允許 dataset 直接提供含副檔名的檔名
+const exts = ['.jpg','.jpeg','.png','.webp','.JPG','.JPEG','.PNG','.WEBP'];
+
+const works = JSON.parse(document.getElementById('dataset').textContent);
+let selected = new Set();
+
+function remaining(){return MAX_VOTES - selected.size}
+
+function resolveImagePath(base){
+  // 若本身就含副檔名，直接用
+  if(/\.(jpg|jpeg|png|webp|JPG|JPEG|PNG|WEBP)$/.test(base)) return `images/${base}`;
+  // 否則嘗試附加副檔名
+  return null; // 交由載入器逐一嘗試 exts
+}
+
+function buildCard(w){
+  const card = document.createElement('div');
+  card.className = 'card';
+  const wrap = document.createElement('div');
+  wrap.className = 'photo-wrap';
+  const img = document.createElement('img');
+
+  let direct = resolveImagePath(w.photo_name);
+  let idx = 0;
+  function tryLoad(){
+    if(direct){ img.src = direct; direct = null; }
+    else { img.src = `images/${w.photo_name}${exts[idx]}`; }
+  }
+  img.onerror = () => { idx++; if(idx < exts.length){ tryLoad(); } else { img.onerror=null; img.src='data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\"200\"><rect width=\"100%\" height=\"100%\" fill=\"#1f2937\"/><text x=\"50%\" y=\"50%\" dominant-baseline=\"middle\" text-anchor=\"middle\" fill=\"#9ca3af\" font-size=\"14\">No Image</text></svg>`);} };
+  img.onload = () => { img.style.visibility='visible'; };
+  tryLoad();
+  img.style.visibility='hidden';
+  img.alt = w.name;
+  img.addEventListener('click', () => openViewer(w, img.src));
+  wrap.appendChild(img);
+
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  const name = document.createElement('div');
+  name.className = 'name';
+  name.textContent = w.name;
+  const emp = document.createElement('div');
+  emp.className = 'emp';
+  emp.textContent = `${w.emp_id}`;
+  meta.appendChild(name);
+  meta.appendChild(emp);
+
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+  const voteBtn = document.createElement('button');
+  voteBtn.className = 'vote';
+  voteBtn.textContent = selected.has(w.emp_id) ? '已選' : '投票';
+  voteBtn.addEventListener('click', () => {
+    if(selected.has(w.emp_id)){
+      selected.delete(w.emp_id); voteBtn.classList.remove('active'); voteBtn.textContent = '投票';
+    } else {
+      if(remaining()<=0){ alert(`您目前的票數已達上限（${MAX_VOTES}）`); return; }
+      selected.add(w.emp_id); voteBtn.classList.add('active'); voteBtn.textContent = '已選';
+    }
+    updateCounter();
+  });
+  actions.appendChild(voteBtn);
+
+  card.appendChild(wrap);
+  card.appendChild(meta);
+  card.appendChild(actions);
+  return card;
+}
+
+function render(){
+  const grid = document.querySelector('.grid');
+  grid.innerHTML = '';
+  works.forEach(w => grid.appendChild(buildCard(w)));
+  updateCounter();
+}
+
+function updateCounter(){
+  document.getElementById('remain').innerHTML = `<strong>${remaining()}</strong> / ${MAX_VOTES}`;
+}
+
+function submitVotes(){
+  alert('投票成功！（示意）\n此為前端範例，實際寫入請接後端或 Google Sheets。');
+}
+
+function openViewer(w, src){
+  const modal = document.getElementById('modal');
+  modal.classList.add('open');
+  document.getElementById('bigimg').src = src;
+  document.getElementById('vname').textContent = w.name;
+  document.getElementById('vemp').textContent = w.emp_id;
+  document.getElementById('vtext').textContent = w.description;
+}
+function closeViewer(){ document.getElementById('modal').classList.remove('open'); }
+
+render();
+</script>
+
+<div class="modal" id="modal" onclick="closeViewer()">
+  <div class="viewer" onclick="event.stopPropagation()">
+    <div class="big"><img id="bigimg" alt="preview" /></div>
+    <div class="desc">
+      <h3 id="vname"></h3>
+      <div class="emp" id="vemp"></div>
+      <div class="text" id="vtext"></div>
+    </div>
+    <div class="close" onclick="closeViewer()" title="關閉">✕</div>
+  </div>
+</div>
+
+</body>
+</html>
